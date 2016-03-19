@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+
+    <!-- css -->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://getbootstrap.com/examples/starter-template/starter-template.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.10/ngStorage.min.js"></script>
+
+
+    <!-- Latest compiled and minified JavaScript -->
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> -->
+</head>
+<body ng-App="todo_list">
+
+    <!-- the main view -->
+    <div ui-view></div>
+
+
+    <!-- templates -->
+    <!-- menu  -->
+    <script id="menu.html" type="text/ng-template">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+              <div class="container">
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="#">Todo List</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                  <ul class="nav navbar-nav">
+                    <li><a ui-sref="nav.login">Login</a></li>
+                    <li><a ui-sref="nav.signup">SignUp</a></li>
+                  </ul>
+                </div><!--/.nav-collapse -->
+              </div>
+        </nav>
+
+        <!-- sub view -->
+        <div class="container" ui-view>
+        </div>
+        {% comment %}<div ui-view></div>{% endcomment %}
+    </script>
+
+    <!-- login -->
+    <script id="login.html" type="text/ng-template">
+        <div class="starter-template">
+              <h1>{[(  flag  )]}</h1>
+              <br>
+            <form>
+                <p>Enter Email: <input type="email" ng-model="login.email" class="form-control"></p>
+                <p>Enter Password: <input type="password" ng-model="login.password" class="form-control"></p>
+                <p><input type="submit" value="Log in" ng-click="getting_in(login)" class="btn btn-block btn-primary"></p>
+            </form>
+        </div>
+    </script>
+
+    <!-- sign up -->
+    <script id="sign_up.html" type="text/ng-template">
+        <div class="starter-template">
+              <h1>{[(  flag  )]}</h1>
+             <br>
+             <form>
+                <p>Enter fullname: <input type="text" class="form-control" ng-model="Signup.full_name"></p>
+                <p>Enter email: <input type="text" class="form-control" ng-model="Signup.email"></p>
+                <p>Enter password: <input type="password" class="form-control" ng-model="Signup.password"></p>
+                <p><input type="submit" value="Sign up" class="btn btn-block btn-primary" ng-click="getSignup(Signup)"></p>
+             </form>
+        </div>
+    </script>
+
+
+    <!-- after login -->
+    <script id="homemenu.html" type="text/ng-template">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+              <div class="container">
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="#">Todo List</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                  <ul class="nav navbar-nav">
+                    <li><a  href="/#/home/todo_list">Work List</a></li>
+                    <li><a href="/#/home/create_task">Create</a></li>
+                    <li><a href="#" ng-click="log_out()">Log Out</a></li>
+                  </ul>
+                </div><!--/.nav-collapse -->
+              </div>
+        </nav>
+
+        <!-- sub view -->
+        <div class="container" ui-view>
+        </div>
+    </script>
+
+    <script id="task_list.html" type="text/ng-template" ng-init="priority={'0':'low','1':'medium','2':'high'};choice={'0':'not done','1':'done'}">
+        <div class="starter-template">
+
+            <h1 ng-if="flag">{[( flag )]}</h1>
+
+                <table ng-if="Task" border="1" class="table">
+                    <tr>
+                        <td>Title</td>
+                        <td>Date</td>
+                        <td>Prirority</td>
+                        <td>Choice</td>
+                        <td>Edit</td>
+                        <td>Delete</td>
+                    </tr>
+                    <tr ng-repeat="T in Task">
+                        <td>{[( T['t_title'] )]}</td>
+                        <td>{[( T['t_date'] )]}</td>
+                        <td>{[( priority[T['t_priority']] )]}</td>
+                        <td>{[( choice[T['t_choice']] )]}</td>
+                        <td><a ui-sref="home.edit_task(T)" class="btn btn-success">Edit</a></td>
+                        <td><button ng-click="delete_todo(T)" class="btn btn-danger">Delete</button></td>
+                    </tr>
+                </table>
+
+        </div>
+    </script>
+
+    <script id="create_task.html" type="text/ng-template">
+        <div class="starter-template">
+            <form>
+                <h1>{[(  flag  )]}</h1>
+                <p>Enter task name: <input type="text" class="form-control" ng-model="Task.t_title"></p>
+                <p>Enter task date: <input type="text" class="form-control" ng-model="Task.t_date"></p>
+                <p>Enter task Priority:
+                        <select ng-model="Task.t_priority" class="form-control">
+                            <option value="0">Low</option>
+                            <option value="1">Medium</option>
+                            <option value="2">High</option>
+                        </select>
+                </p>
+                <p>Done?:
+                        <select ng-model="Task.t_choice" class="form-control">
+                            <option value="0">not done</option>
+                            <option value="1">done</option>
+                        </select>
+                </p>
+                <p><input type="submit" value="Create" ng-click="createTodo(Task)" class="btn btn-block btn-primary"></p>
+            </form>
+        </div>
+    </script>
+
+
+    <script id="edit_task.html" type="text/ng-template" ng-init="priority={'0':'low','1':'medium','2':'high'};choice={'0':'not done','1':'done'}">
+        <div class="starter-template">
+            <form>
+                <h1>{[(  flag  )]}</h1>
+                <p>Enter task name: <input type="text" class="form-control" ng-model="Task.t_title"></p>
+                <p>Enter task date: <input type="text" class="form-control" ng-model="Task.t_date"></p>
+                <p>Enter task Priority:
+                        <select ng-model="Task.t_priority" class="form-control">
+                            <option value="{[(  key  )]}" ng-repeat="(key,value) in priority">{[(  value  )]}</option>
+                        </select>
+                </p>
+                <p>Done?:
+                        <select ng-model="Task.t_choice" class="form-control">
+                            <option value="{[(  key  )]}" ng-repeat="(key,value) in choice">{[(  value  )]}</option>
+                        </select>
+                </p>
+                <p><input type="submit" value="Edit" ng-click="editTodo(Task)" class="btn btn-block btn-success"></p>
+            </form>
+        </div>
+    </script>
+
+    <!-- angular code  -->
+    <script>
+        angular.module('todo_list',['ui.router','ngStorage'])
+
+                /*  routes */
+                .config(function($stateProvider,$urlRouterProvider,$interpolateProvider) {
+
+                    $interpolateProvider.startSymbol('{[(').endSymbol(')]}');
+
+                    $stateProvider
+                            .state('nav',{
+                                url : '/nav',
+                                abstract : true,
+                                templateUrl : 'menu.html'
+                            })
+
+                            .state('nav.login',{
+                                url : '/login',
+                                parent : 'nav',
+                                templateUrl : 'login.html',
+                                controller : 'loginCtrl'
+                            })
+
+                            .state('nav.signup',{
+                                url : '/signup',
+                                parent : 'nav',
+                                templateUrl : 'sign_up.html',
+                                controller : 'signupCtrl'
+                            })
+
+                            /*------------------------------*/
+
+                            .state('home',{
+                                url : '/home',
+                                abstruct : true,
+                                templateUrl : 'homemenu.html',
+                                controller : 'homemenuCtrl'
+                            })
+
+                            .state('home.todo_list',{
+                                url : '/todo_list',
+                                parent : 'home',
+                                templateUrl : 'task_list.html',
+                                controller : 'taskListCtrl'
+                            })
+
+                            .state('home.create_task',{
+                                url : '/create_task',
+                                parent : 'home',
+                                templateUrl : 'create_task.html',
+                                controller : 'createTodoCtrl'
+                            })
+
+                            .state('home.edit_task',{
+                                url : '/{t_id}/{t_title}/{t_date}/{t_priority}/{t_choice}',
+                                parent : 'home',
+                                templateUrl : 'edit_task.html',
+                                controller : 'editTaskCtrl'
+                            })
+
+                            /*-----------------------*/
+
+                            $urlRouterProvider.otherwise('/nav/login');
+                })
+
+                .run(function($rootScope,$state,$localStorage) {
+
+                    // page changes
+                    $rootScope.$on('$viewContentLoaded',function(e) {
+
+                        if($state.current.name.search('nav') != '-1')
+                        {
+                            if($localStorage.user != undefined)
+                            {
+                                $state.go('home.todo_list',{},{reload:true});
+                            }
+                        }
+
+                    })
+
+                })
+
+                /*     controllers     */
+                .controller('signupCtrl',function($scope,signUpService) {
+
+                        $scope.getSignup = function(Sign_up)
+                        {
+                            if(Sign_up != undefined) {
+                                response = JSON.parse(signUpService(Sign_up));
+
+                                if(response != 0)
+                                {
+                                    if (response.status == 'success')
+                                    {
+                                        $scope.Signup = {}
+                                    }
+
+                                    $scope.flag = response.message;
+                                }
+                                else {
+                                    $scope.flag = "Cannot find server";
+                                }
+                            }
+
+                        }
+                })
+
+                .controller('loginCtrl',function($scope,$localStorage,$state,loginService) {
+
+                        $scope.getting_in = function(login) {
+                            if(login != undefined)
+                            {
+                                response = JSON.parse(loginService(login));
+
+                                if(response.status == 'success')
+                                {
+                                    $localStorage.user = response.data;
+
+                                    $state.go('home.todo_list',{},{reload : true})
+                                }
+                                else {
+                                    $scope.flag = response.message;
+                                }
+                            }
+                        }
+
+                })
+
+
+                .controller('createTodoCtrl',function($scope,$localStorage,createTodoService) {
+                    $scope.createTodo = function(Task) {
+
+                        if(Task != undefined)
+                        {
+                            user = $localStorage.user[0];
+                            Task["u_id"] = user.u_id;
+
+                            response = JSON.parse(createTodoService(Task));
+
+                            if(response.status == 'success')
+                            {
+                                $scope.Task = {};
+                            }
+
+                            $scope.flag = response.message;
+                        }
+
+                    }
+                })
+
+
+                .controller('editTaskCtrl',function($scope,$state,$localStorage,$stateParams,editTodoService) {
+
+                    if(Object.keys($stateParams).length == 5)
+                    {
+                        $scope.Task = $stateParams;
+                    }
+
+                    $scope.editTodo = function(Task) {
+                        if(Task != undefined)
+                        {
+                            user = $localStorage.user[0];
+                            Task["u_id"] = user["u_id"];
+
+                            response = JSON.parse(editTodoService(Task));
+
+                            if(response.status == "success")
+                            {
+                                $state.go('home.todo_list',{},{reload:true});
+                            }
+                            else {
+                                $scope.flag = response.message;
+                            }
+                        }
+                    }
+                })
+
+
+                .controller('taskListCtrl',function($scope,$state,$localStorage,todoListService,deleteTodoService) {
+                    // cuurent user
+                    var user = $localStorage.user[0];
+
+
+                    $scope.delete_todo = function(task) {
+                        packet = {'t_id' : task.t_id,'u_id' : user['u_id']}
+
+                        response = JSON.parse(deleteTodoService(packet));
+
+                        if(respone.status == 'success')
+                        {
+                            $scope.$emit('$viewContentLoaded')
+                        }
+                        else {
+                            alert(respone.message);
+                        }
+                    }
+
+                    // when page is loaded
+                    $scope.$on('$viewContentLoaded',function() {
+                        $scope.Task = undefined;
+                        respone = JSON.parse(todoListService({'u_id' : user['u_id']}));
+
+                        if(respone.status == 'success')
+                        {
+                            $scope.Task = respone.data;
+                        }
+                        else
+                        {
+                            $scope.flag = respone.message;
+                        }
+                    })
+
+                })
+
+
+                .controller('homemenuCtrl',function($scope,$localStorage,$state) {
+                    $scope.log_out = function() {
+                        if(delete $localStorage.user)
+                        {
+                            $state.go('nav.login',{},{reload : true})
+                        }
+                    }
+                })
+
+
+                /*     service             */
+                .service('signUpService',[
+                        function() {
+                            var sign_up = function(packet) {
+                                var request;
+
+                                if(window.XMLHttpRequest)
+                                {
+                                    request = new XMLHttpRequest();
+                                }
+
+                                try
+                                {
+                                    request.open('POST','http://127.0.0.1:8000/sign_up',false);
+                                    request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+                                    request.send("sign_up="+JSON.stringify(packet));
+                                }
+                                catch(e)
+                                {
+                                    return 0;
+                                }
+
+                                if(request.readyState == 4 && request.status == 200)
+                                {
+                                    return request.responseText;
+                                }
+
+                            }
+
+                            return sign_up;
+                        }
+                ])
+
+                .service('loginService',[function() {
+
+                    var log_ing = function(packet) {
+                        var request;
+
+                        if(window.XMLHttpRequest)
+                        {
+                            request = new XMLHttpRequest();
+                        }
+
+                        try {
+                            request.open("POST","http://127.0.0.1:8000/getting_in",false);
+                            request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+                            request.send("login="+JSON.stringify(packet))
+                        }
+                        catch(e)
+                        {
+                            return 0;
+                        }
+
+                        if(request.readyState == 4 && request.status == 200)
+                        {
+                            return request.responseText;
+                        }
+                    }
+
+                    return log_ing;
+                }])
+
+
+                .service('createTodoService',[
+                        function() {
+                            var create_todo = function(packet) {
+                                var request;
+
+                                if(window.XMLHttpRequest)
+                                {
+                                    request = new XMLHttpRequest();
+                                }
+
+                                try
+                                {
+                                    request.open('POST','http://127.0.0.1:8000/create_todo',false);
+                                    request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+                                    request.send("todo="+JSON.stringify(packet));
+                                }
+                                catch(e)
+                                {
+                                    return 0;
+                                }
+
+                                if(request.readyState == 4 && request.status == 200)
+                                {
+                                    return request.responseText;
+                                }
+
+                            }
+
+                            return create_todo;
+                        }
+                ])
+
+
+                .service('todoListService',[
+                        function() {
+                            var todo_list = function(packet) {
+                                var request;
+
+                                if(window.XMLHttpRequest)
+                                {
+                                    request = new XMLHttpRequest();
+                                }
+
+                                try
+                                {
+                                    request.open('GET','http://127.0.0.1:8000/todo_by_user?u_id='+packet['u_id'],false);
+                                    request.send(null);
+                                }
+                                catch(e)
+                                {
+                                    return 0;
+                                }
+
+                                if(request.readyState == 4 && request.status == 200)
+                                {
+                                    return request.responseText;
+                                }
+
+                            }
+
+                            return todo_list;
+                        }
+                ])
+
+
+                .service('deleteTodoService',[
+                        function() {
+                            var delete_todo = function(packet) {
+                                var request;
+
+                                if(window.XMLHttpRequest)
+                                {
+                                    request = new XMLHttpRequest();
+                                }
+
+                                try
+                                {
+                                    request.open('GET','http://127.0.0.1:8000/delete_todo?u_id='+packet["u_id"]+'&t_id='+packet["t_id"],false);
+                                    request.send(null);
+                                }
+                                catch(e)
+                                {
+                                    return 0;
+                                }
+
+                                if(request.readyState == 4 && request.status == 200)
+                                {
+                                    return request.responseText;
+                                }
+
+                            }
+
+                            return delete_todo;
+                        }
+                ])
+
+                .service('editTodoService',[
+                        function() {
+                            var edit_todo = function(packet) {
+                                var request;
+
+                                if(window.XMLHttpRequest)
+                                {
+                                    request = new XMLHttpRequest();
+                                }
+
+                                try
+                                {
+                                    request.open('POST','http://127.0.0.1:8000/update_todo',false);
+                                    request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+                                    request.send("todo="+JSON.stringify(packet));
+                                }
+                                catch(e)
+                                {
+                                    return 0;
+                                }
+
+                                if(request.readyState == 4 && request.status == 200)
+                                {
+                                    return request.responseText;
+                                }
+
+                            }
+
+                            return edit_todo;
+                        }
+                ])
+    </script>
+</body>
+</html>
